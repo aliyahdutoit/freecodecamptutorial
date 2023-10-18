@@ -135,3 +135,166 @@ age = {
   years: 100,
   months: 2,
 };
+
+// Type Alias//
+
+
+type StringOrNumber = string | number;
+
+type PersonObject = {
+  name: string;
+  id: StringOrNumber;
+};
+
+const person1: PersonObject = {
+  name: 'John',
+  id: 1,
+};
+
+const person2: PersonObject = {
+  name: 'Delia',
+  id: 2,
+};
+
+const sayHello = (person: PersonObject) => {
+  return 'Hi ' + person.name;
+};
+
+const sayGoodbye = (person: PersonObject) => {
+  return 'Seeya ' + person.name;
+};
+
+
+
+//  DOM & Type Casting  //
+
+// -->   TS doesn't have access to the DOM like JS. 
+// -->   Whenever DOM are trying to be accessed, TS unsure if they exist 
+
+
+const link = document.querySelector('a');
+
+console.log(link.href); 
+
+
+
+// Here we are telling TypeScript that we are certain that this anchor tag exists
+const link = document.querySelector('a')!;
+
+console.log(link.href);
+
+
+// if needed to select DOM element by its class/id? TS can't infer type
+
+const form = document.getElementById('signup-form');
+
+console.log(form.method);
+
+
+//  need to tell TS certain form exists, known type HTMLFormElement.
+
+const form = document.getElementById('signup-form') as HTMLFormElement;
+
+console.log(form.method);
+
+
+const form = document.getElementById('signup-form') as HTMLFormElement;
+
+form.addEventListener('submit', (e: Event) => {
+  e.preventDefault(); // prevents the page refreshing
+
+  console.log(e.tarrget); 
+
+
+
+ 
+  //  Classes in TS  //
+
+  class Person {
+    name: string;
+    isCool: boolean;
+    pets: number;
+  
+    constructor(n: string, c: boolean, p: number) {
+      this.name = n;
+      this.isCool = c;
+      this.pets = p;
+    }
+  
+    sayHello() {
+      return `Hi, my name is ${this.name} and I have ${this.pets} pets`;
+    }
+  }
+  
+  const person1 = new Person('Danny', false, 1);
+  const person2 = new Person('Sarah', 'yes', 6);    
+  console.log(person1.sayHello());
+
+
+  //  create a people array that only includes objects constructed from the Person class.
+
+  let People: Person[] = [person1, person2];
+
+
+
+  class Person {
+    readonly name: string; // This property is immutable - it can only be read
+    private isCool: boolean; // Can only access or modify from methods within this class
+    protected email: string; // Can access or modify from this class and subclasses
+    public pets: number; // Can access or modify from anywhere - including outside the class
+  
+    constructor(n: string, c: boolean, e: string, p: number) {
+      this.name = n;
+      this.isCool = c;
+      this.email = e;
+      this.pets = p;
+    }
+  
+    sayMyName() {
+      console.log(`Your not Heisenberg, you're ${this.name}`);
+    }
+  }
+  
+  const person1 = new Person('Danny', false, 'dan@e.com', 1);
+  console.log(person1.name); 
+  person1.name = 'James'; 
+  console.log(person1.isCool); 
+  console.log(person1.email); 
+  console.log(person1.pets); 
+
+
+
+  class Person {
+    constructor(
+      readonly name: string,
+      private isCool: boolean,
+      protected email: string,
+      public pets: number
+    ) {}
+  
+    sayMyName() {
+      console.log(`Your not Heisenberg, you're ${this.name}`);
+    }
+  }
+  
+  const person1 = new Person('Danny', false, 'dan@e.com', 1);
+  console.log(person1.name); 
+
+
+  class Programmer extends Person {
+    programmingLanguages: string[];
+  
+    constructor(
+      name: string,
+      isCool: boolean,
+      email: string,
+      pets: number,
+      pL: string[]
+    ) {
+      // The super call must supply all parameters for base (Person) class, as the constructor is not inherited.
+      super(name, isCool, email, pets);
+      this.programmingLanguages = pL;
+    }
+  }
+
+  
