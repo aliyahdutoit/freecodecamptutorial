@@ -449,3 +449,268 @@ console.log(firstname);
 
 // Literal Types in TS //
 
+
+// general types are strings and numbers
+// can refer to specified strings/numbers in type positions.
+
+// Union type with a literal type in each position
+
+
+// let favouriteColor: 'red' | 'blue' | 'green' | 'yellow';
+
+// favouriteColor = 'blue';
+// favouriteColor = 'crimson';
+
+
+//  Generics  //
+
+// allow you to create a component that can work over a variety of types
+// helps to make the component more reusable.
+
+
+// |addID| it gives any object an ID:
+
+// const addID = (obj: object) => {
+//   let id = Math.floor(Math.random() * 1000);
+
+//   return { ...obj, id };
+// };
+
+// let person1 = addID({ name: 'John', age: 40 });
+
+// console.log(person1.id); 
+// console.log(person1.name);
+
+
+// <T> is just the convention - e.g. we could use <X> or <A>
+
+// const addID = <T>(obj: T) => {
+//   let id = Math.floor(Math.random() * 1000);
+
+//   return { ...obj, id };
+// };
+
+
+//  problem: anything can be passed into addID and TypeScript will capture the type and report no problem:
+
+// let person1 = addID({ name: 'John', age: 40 });
+// let person2 = addID('Sally'); 
+
+// console.log(person1.id); 
+// console.log(person1.name);
+
+// console.log(person2.id);
+// console.log(person2.name);
+
+
+//   constraint needed:
+
+// const addID = <T extends object>(obj: T) => {
+//   let id = Math.floor(Math.random() * 1000);
+
+//   return { ...obj, id };
+// };
+
+// let person1 = addID({ name: 'John', age: 40 });
+// let person2 = addID('Sally'); 
+
+
+//   we can still get away with passing in an array:
+
+// let person2 = addID(['Sally', 26]); 
+
+// console.log(person2.id); 
+// console.log(person2.name);
+
+
+
+
+
+
+//  Generics with Interfaces
+
+
+// The type, T, will be passed in
+// interface Person<T> {
+//   name: string;
+//   age: number;
+//   documents: T;
+// }
+
+// We have to pass in the type of `documents` - an array of strings in this case
+// const person1: Person<string[]> = {
+//   name: 'John',
+//   age: 48,
+//   documents: ['passport', 'bank statement', 'visa'],
+// };
+
+// Again, we implement the `Person` interface, and pass in the type for documents - in this case a string
+// const person2: Person<string> = {
+//   name: 'Delia',
+//   age: 46,
+//   documents: 'passport, P45',
+// };
+
+
+
+
+//  Enums in Typescript  //
+
+
+// enum ResourceType {
+//   BOOK,
+//   AUTHOR,
+//   FILM,
+//   DIRECTOR,
+//   PERSON,
+// }
+
+// console.log(ResourceType.BOOK); // 0
+// console.log(ResourceType.AUTHOR); // 1
+
+// To start from 1
+// enum ResourceType {
+//   BOOK = 1,
+//   AUTHOR,
+//   FILM,
+//   DIRECTOR,
+//   PERSON,
+// }
+
+// console.log(ResourceType.BOOK); // 1
+// console.log(ResourceType.AUTHOR); // 2
+
+
+
+//  Typescript Strict Mode //
+
+ // tsconfig.json
+//  "strict": true
+
+
+ //  No Implicit Any  //
+
+//  function logName(a) {
+//   // No error??
+//   console.log(a.name);
+// }
+
+// logName(97);
+
+
+// noImplicitAny option turned on:
+
+// ERROR: Parameter 'a' implicitly has an 'any' type.
+// function logName(a) {
+//   console.log(a.name);
+// }
+
+
+// Strict null Checks  //
+
+
+// let whoSangThis: string = getSong();
+
+// const singles = [
+//   { song: 'touch of grey', artist: 'grateful dead' },
+//   { song: 'paint it black', artist: 'rolling stones' },
+// ];
+
+// const single = singles.find((s) => s.song === whoSangThis);
+
+// console.log(single.artist);
+
+
+
+
+// const getSong = () => {
+//   return 'song';
+// };
+
+// let whoSangThis: string = getSong();
+
+// const singles = [
+//   { song: 'touch of grey', artist: 'grateful dead' },
+//   { song: 'paint it black', artist: 'rolling stones' },
+// ];
+
+// const single = singles.find((s) => s.song === whoSangThis);
+
+// console.log(single.artist);
+
+
+
+//   check if it isn't null or undefined first:
+
+
+// if (single) {
+//   console.log(single.artist); // rolling stones
+// }
+
+
+
+//  Narrowing in Typescript  //
+
+
+//   a variable can move from a less precise type to a more precise type.
+
+
+
+function addAnother(val: string | number) {
+  if (typeof val === 'string') {
+    // TypeScript treats `val` as a string in this block, so we can use string methods on `val` and TypeScript won't shout at us
+    return val.concat(' ' + val);
+  }
+
+  // TypeScript knows `val` is a number here
+  return val + val;
+}
+
+console.log(addAnother('Woooo')); // Woooo Woooo
+console.log(addAnother(20)); // 40
+
+
+
+//  e.g. 2
+
+interface Vehicle {
+  topSpeed: number;
+}
+
+interface Train extends Vehicle {
+  carriages: number;
+}
+
+interface Plane extends Vehicle {
+  wingSpan: number;
+}
+
+type PlaneOrTrain = Plane | Train;
+
+function getSpeedRatio(v: PlaneOrTrain) {
+  // In here, we want to return topSpeed/carriages, or topSpeed/wingSpan
+  console.log(v.carriages);
+
+
+
+
+
+  // All trains must now have a type property equal to 'Train'
+interface Train extends Vehicle {
+  type: 'Train';
+  carriages: number;
+}
+
+// All trains must now have a type property equal to 'Plane'
+interface Plane extends Vehicle {
+  type: 'Plane';
+  wingSpan: number;
+}
+
+type PlaneOrTrain = Plane | Train;
+
+
+// narrow down 'v'
+
+
+
